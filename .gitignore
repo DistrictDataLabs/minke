@@ -58,8 +58,11 @@ docs/_build/
 # PyBuilder
 target/
 
-#Ipython Notebook
+# Ipython Notebook
 .ipynb_checkpoints
 
 # OS X Stuff
-.DS_Store 
+.DS_Store
+
+# Data and fixtures
+fixtures/corpus
