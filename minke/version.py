@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: version.py [] benjamin@bengfort.com $
+# ID: version.py [cc05613] benjamin@bengfort.com $
 
 """
 Stores version information such that it can be read by setuptools.
