@@ -1,5 +1,7 @@
 ## Dependencies
 nltk==3.2.1
+beautifulsoup4==4.4.1
+lxml==3.6.0
 
 ## Utilities
 python-dateutil==2.5.2
