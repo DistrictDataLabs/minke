@@ -19,9 +19,11 @@ See: http://bdewilde.github.io/blog/2014/09/23/intro-to-automatic-keyphrase-extr
 ##########################################################################
 
 import nltk
-# import gensim
+import heapq
+import gensim
 
 from itertools import groupby
+from operator import itemgetter
 from nltk.chunk import tree2conlltags
 from nltk.chunk.regexp import RegexpParser
 
@@ -66,6 +68,7 @@ def extract_candidate_chunks(sents, grammar=GRAMMAR, **kwargs):
     for sent in sents:
         # Tokenize and tag sentences, then parse with our chunker.
         tagged_sent = nltk.pos_tag(nltk.wordpunct_tokenize(sent))
+        if not tagged_sent: continue
         chunks = tree2conlltags(chunker.parse(tagged_sent))
 
         # Extract candidate phrases from our parsed chunks
@@ -97,7 +100,92 @@ def extract_candidate_words(sents, tags=GOODTAGS, **kwargs):
 ## Key phrase by text scoring mechanisms
 ##########################################################################
 
-# class Keyphrase
+class Scorer(object):
+    """
+    An base class for any key phrase scoring mechanism that we use. Scorers
+    wrap a corpus object, and then can be used to get rankings for each
+    individual document in the corpus by fileid.
+    """
+
+    def __init__(self, corpus):
+        self.corpus = corpus
+
+    def score(self, fileids=None, categories=None):
+        """
+        Fits the scorer to the specified fileids.
+        """
+        raise NotImplementedError("Subclasses must define scoring.")
+
+    def keyphrases(self, N=20, fileids=None, categories=None):
+        """
+        Returns the N top key phrases per document.
+        """
+        raise NotImplementedError("Subclasses must implement rankings.")
+
+
+class TFIDFScorer(Scorer):
+    """
+    Uses TF-IDF to score and rank key phrases.
+    """
+
+    def __init__(self, corpus):
+        super(TFIDFScorer, self).__init__(corpus)
+        self.lexicon = None
+        self.tfidfs  = None
+        self.fileids = None
+
+    def score(self, fileids=None, categories=None):
+        """
+        Fits the TF-IDF model and creates the lexicon and scores.
+        """
+        # Resolve the fileids and the categories for doc specific selection.
+        self.fileids = self.corpus._resolve(fileids, categories)
+
+        # Create the lexicon of candidate phrases per document.
+        # TODO: generalize the candidate extraction to the scorer.
+        self.lexicon = gensim.corpora.Dictionary(
+            extract_candidates(corpus.sents(fileids=fileid))
+            for fileid in self.fileids
+        )
+
+        # Create the vectorized corpus for scoring
+        # TODO: How do we not make multiple passes without memory loading?
+        vectors     = [
+            self.lexicon.doc2bow(
+                extract_candidates(
+                    corpus.sents(fileids=fileid)
+                )
+            )
+            for fileid in self.fileids
+        ]
+
+        # Fit the TF-IDF model and compute the scores
+        model  = gensim.models.TfidfModel(vectors)
+        self.tfidfs = model[vectors]
+
+        # Clean up the vectors and the mdoel
+        del vectors
+        del model
+
+    def keyphrases(self, N=20, fileids=None, categories=None):
+        """
+        Returns the top N keyphrases grouped by document id.
+        TODO: this currently ignores fileids/categories.
+        """
+        if not self.tfidfs or not self.lexicon or not self.fileids:
+            raise ValueError("Must call the score method first!")
+
+        for idx, doc in enumerate(self.tfidfs):
+            fileid = self.fileids[idx]
+
+            # Get the top N terms by TF-IDF score
+            scores = [
+                (self.lexicon[wid], score)
+                for wid, score in heapq.nlargest(N, doc, key=itemgetter(1))
+            ]
+
+            yield fileid, scores
+
 
 if __name__ == '__main__':
     import os
@@ -107,9 +195,14 @@ if __name__ == '__main__':
 
     from corpus import BaleenCorpusReader
 
-    corpus  = BaleenCorpusReader(CORPUS)
-    cands = candidates(corpus.sents(categories=['data science']), True)
+    corpus = BaleenCorpusReader(CORPUS)
+    scorer = TFIDFScorer(corpus)
+    scorer.score(categories=['data science'])
 
-    for idx, cand in enumerate(cands):
-        print cand
-        if idx > 20: break
+    for idx, (fileid, scores) in enumerate(scorer.keyphrases()):
+        print u"Document '{}' keyphrases:".format(fileid)
+        for word, score in scores:
+            print u"{:0.3f}: {}".format(score, word)
+        print
+
+        if idx > 3: break

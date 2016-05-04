@@ -55,7 +55,7 @@ class Lemmatizer(object):
             'V': wn.VERB,
             'R': wn.ADV,
             'J': wn.ADJ
-        }[tag[0]]
+        }.get(tag[0], wn.NOUN)
 
     def poswn(self, word):
         """
