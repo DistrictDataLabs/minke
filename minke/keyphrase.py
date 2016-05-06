@@ -29,6 +29,7 @@ from nltk.chunk.regexp import RegexpParser
 
 from minke.normalize import Normalizer
 from minke.normalize import STOPWORDS, PUNCT
+from minke.corpus import BaleenPickledCorpusReader
 
 ##########################################################################
 ## Module Constants
@@ -47,7 +48,8 @@ def extract_candidates(sents, chunks=True, grammar=GRAMMAR, tags=GOODTAGS, **kwa
     True than this uses `extract_candidate_chunks` otherwise uses the
     `extract_candidate_words` function. Also aliased as `candidates`.
 
-    Note: this function expects tokenized sentences passed in to the method.
+    If the sentences are already tokenized and tagged, pass in: tagged=True
+    Note: this function expects segmented sentences passed in to the method.
     """
     if chunks:
         return extract_candidate_chunks(sents, grammar, **kwargs)
@@ -58,18 +60,22 @@ def extract_candidates(sents, chunks=True, grammar=GRAMMAR, tags=GOODTAGS, **kwa
 candidates = extract_candidates
 
 
-def extract_candidate_chunks(sents, grammar=GRAMMAR, **kwargs):
+def extract_candidate_chunks(sents, grammar=GRAMMAR, tagged=False, **kwargs):
     """
     Extracts key chunks based on a grammar for a list of tokenized sentences.
+    If the sentences are already tokenized and tagged, pass in: tagged=True
     """
     normalizer = Normalizer(**kwargs)
     chunker    = RegexpParser(grammar)
 
     for sent in sents:
-        # Tokenize and tag sentences, then parse with our chunker.
-        tagged_sent = nltk.pos_tag(nltk.wordpunct_tokenize(sent))
-        if not tagged_sent: continue
-        chunks = tree2conlltags(chunker.parse(tagged_sent))
+        # Tokenize and tag sentences if necessary
+        if not tagged:
+            sent = nltk.pos_tag(nltk.wordpunct_tokenize(sent))
+
+        # Parse with the chunker if we have a tagged sentence
+        if not sent: continue
+        chunks = tree2conlltags(chunker.parse(sent))
 
         # Extract candidate phrases from our parsed chunks
         chunks = [
@@ -84,17 +90,24 @@ def extract_candidate_chunks(sents, grammar=GRAMMAR, **kwargs):
             yield chunk
 
 
-def extract_candidate_words(sents, tags=GOODTAGS, **kwargs):
+def extract_candidate_words(sents, tags=GOODTAGS, tagged=False, **kwargs):
     """
     Extracts key words based on a list of good part of speech tags.
+    If the sentences are already tokenized and tagged, pass in: tagged=True
     """
-    normalizer  = Normalizer(**kwargs)
+    normalizer = Normalizer(**kwargs)
 
     for sent in sents:
-        for token, tag in nltk.pos_tag(nltk.wordpunct_tokenize(sent)):
+        # Tokenize and tag sentences if necessary
+        if not tagged:
+            sent = nltk.pos_tag(nltk.wordpunct_tokenize(sent))
+
+        # Identify only good words by their tag
+        for token, tag in sent:
             if tag in tags:
                 for token in normalizer.normalize([token]):
                     yield token
+
 
 ##########################################################################
 ## Key phrase by text scoring mechanisms
@@ -110,7 +123,7 @@ class Scorer(object):
     def __init__(self, corpus):
         self.corpus = corpus
 
-    def score(self, fileids=None, categories=None):
+    def score(self, fileids=None, categories=None, chunks=True):
         """
         Fits the scorer to the specified fileids.
         """
@@ -134,18 +147,22 @@ class TFIDFScorer(Scorer):
         self.tfidfs  = None
         self.fileids = None
 
-    def score(self, fileids=None, categories=None):
+    def score(self, fileids=None, categories=None, chunks=True):
         """
         Fits the TF-IDF model and creates the lexicon and scores.
         """
         # Resolve the fileids and the categories for doc specific selection.
         self.fileids = self.corpus._resolve(fileids, categories)
 
+        # Determine if we have a tagged corpus or not
+        tagged = isinstance(self.corpus, BaleenPickledCorpusReader)
+
         # Create the lexicon of candidate phrases per document.
         # TODO: generalize the candidate extraction to the scorer.
         self.lexicon = gensim.corpora.Dictionary(
-            extract_candidates(corpus.sents(fileids=fileid))
-            for fileid in self.fileids
+            extract_candidates(
+                corpus.sents(fileids=fileid), chunks=chunks, tagged=tagged
+            ) for fileid in self.fileids
         )
 
         # Create the vectorized corpus for scoring
@@ -153,10 +170,9 @@ class TFIDFScorer(Scorer):
         vectors     = [
             self.lexicon.doc2bow(
                 extract_candidates(
-                    corpus.sents(fileids=fileid)
+                    corpus.sents(fileids=fileid), chunks=chunks, tagged=tagged
                 )
-            )
-            for fileid in self.fileids
+            ) for fileid in self.fileids
         ]
 
         # Fit the TF-IDF model and compute the scores
@@ -191,11 +207,11 @@ if __name__ == '__main__':
     import os
 
     PROJECT = os.path.join(os.path.dirname(__file__), "..")
-    CORPUS  = os.path.join(PROJECT, "fixtures", "corpus")
+    CORPUS  = os.path.join(PROJECT, "fixtures", "tagged_corpus")
 
-    from corpus import BaleenCorpusReader
+    from corpus import BaleenPickledCorpusReader
 
-    corpus = BaleenCorpusReader(CORPUS)
+    corpus = BaleenPickledCorpusReader(CORPUS)
     scorer = TFIDFScorer(corpus)
     scorer.score(categories=['data science'])
 
@@ -205,4 +221,4 @@ if __name__ == '__main__':
             print u"{:0.3f}: {}".format(score, word)
         print
 
-        if idx > 3: break
+        if idx > 5: break
