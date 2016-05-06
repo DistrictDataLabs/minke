@@ -161,7 +161,7 @@ class TFIDFScorer(Scorer):
         # TODO: generalize the candidate extraction to the scorer.
         self.lexicon = gensim.corpora.Dictionary(
             extract_candidates(
-                corpus.sents(fileids=fileid), chunks=chunks, tagged=tagged
+                self.corpus.sents(fileids=fileid), chunks=chunks, tagged=tagged
             ) for fileid in self.fileids
         )
 
@@ -170,7 +170,7 @@ class TFIDFScorer(Scorer):
         vectors     = [
             self.lexicon.doc2bow(
                 extract_candidates(
-                    corpus.sents(fileids=fileid), chunks=chunks, tagged=tagged
+                    self.corpus.sents(fileids=fileid), chunks=chunks, tagged=tagged
                 )
             ) for fileid in self.fileids
         ]

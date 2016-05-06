@@ -77,6 +77,13 @@ class BaleenCorpusReader(CategorizedCorpusReader, CorpusReader):
         self._sent_tokenizer = sent_tokenizer
         self._good_tags = tags or self.TAGS
 
+    def feeds(self):
+        """
+        Opens and returns the collection of feeds associated with the corpus.
+        """
+        data = self.open('feeds.json')
+        return json.load(data)
+
     def _resolve(self, fileids, categories):
         """
         Returns a list of fileids or categories depending on what is passed
@@ -270,7 +277,7 @@ class BaleenPickledCorpusReader(BaleenCorpusReader):
             kwargs['cat_pattern'] = CAT_PATTERN
 
         CategorizedCorpusReader.__init__(self, kwargs)
-        CorpusReader.__init__(self, root, fileids, pickle.HIGHEST_PROTOCOL)
+        CorpusReader.__init__(self, root, fileids)
 
     def docs(self, fileids=None, categories=None):
         """
@@ -371,11 +378,10 @@ class BaleenPickledCorpusReader(BaleenCorpusReader):
 if __name__ == '__main__':
 
     PROJECT = os.path.join(os.path.dirname(__file__), "..")
-    RCORPUS = os.path.join(PROJECT, "fixtures", "corpus")
+    # RCORPUS = os.path.join(PROJECT, "fixtures", "corpus")
     PCORPUS = os.path.join(PROJECT, "fixtures", "tagged_corpus")
 
-    rcorpus = BaleenCorpusReader(RCORPUS)
+    # rcorpus = BaleenCorpusReader(RCORPUS)
     pcorpus = BaleenPickledCorpusReader(PCORPUS)
 
-    print len(rcorpus.fileids())
-    print len(pcorpus.fileids())
+    print pcorpus.describes()
