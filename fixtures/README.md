@@ -8,19 +8,19 @@ As of April 19, 2016, the corpus ingested 373 feeds containing 180,342 posts in 
 
 ## Category Counts
 
-- politics: 9862 (1.4G)
-- books: 4506 (422M)
-- business: 22646 (2.8G)
-- cinema: 5680 (492M)
-- cooking: 1901 (198M)
-- data science: 2696 (160M)
-- design: 3164 (523M)
-- do it yourself: 6736 (480M)
-- essays: 966 (6.1G)
-- gaming: 8160 (865M)
-- news: 88865 (20G)
-- sports: 12974 (3.4G)
-- tech: 12186 (1.8G)
+- politics: 9862 (1.4G, 519M pickled)
+- books: 4506 (422M, 330M pickled)
+- business: 22646 (2.8G, 607M pickled)
+- cinema: 5680 (492M, 1.1G pickled)
+- cooking: 1901 (198M, 84M pickled)
+- data science: 2696 (160M, 100M pickled)
+- design: 3164 (523M, 145M pickled)
+- do it yourself: 6736 (480M, 142M pickled)
+- essays: 966 (6.1G, N/A pickled)
+- gaming: 8160 (865M, 271M pickled)
+- news: 88865 (20G, 3.6G pickled)
+- sports: 12974 (3.4G, 372M pickled)
+- tech: 12186 (1.8G, 392M pickled)
 
 ## Corpus Access Times
 
@@ -40,17 +40,27 @@ The two major parsing tasks are in `docs()` and `paras()`, though there is overh
 
 ## Corpus Describe
 
+The following data are complete scans of the corpus that describe the content
+and structure of the corpus in a meaningful way.
+
+### Raw JSON/HTML Corpus Scan
+
 Baleen corpus contains 180342 files in 13 categories.
 
 Structured as:
 
     27140803 paragraphs (150.496 mean paragraphs per file)
-
     98296455 sentences (3.622 mean sentences per paragraph).
 
 Word count of 25308866993 with a vocabulary of 14306098 (1769.096 lexical diversity).
 
-Corpus scan took 108546.756 seconds.
+Corpus scan took 108546.756 (1 day, 6 hours, 9 minutes) seconds.
+
+### Preprocessed Pickle Data Scan
+
+
+
+**NOTE**: Preprocessing took 614 minutes 49.178 seconds before it was killed before using too much memory. It only completed 47,425 out of 180,342 documents (26%). I started the process again for the remaining categories except essays. The second phase took 703 minutes 48.559 seconds and moved the corpus to 179,472 (99.5%). Unfortunately it looks like there is a memory leak in the Essay category that can't be resolved. Whatever the problem is there is probably also in the Cinema category, which somehow gained data.
 
 ## Corpus MimeTypes
 
