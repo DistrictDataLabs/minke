@@ -384,4 +384,4 @@ if __name__ == '__main__':
     # rcorpus = BaleenCorpusReader(RCORPUS)
     pcorpus = BaleenPickledCorpusReader(PCORPUS)
 
-    print pcorpus.describes()
+    print(pcorpus.describes())

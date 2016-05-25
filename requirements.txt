@@ -15,9 +15,9 @@ decorator==4.0.9
 #bz2file==0.98
 #httpretty==0.8.10
 #numpy==1.11.0
-#requests==2.8.1
-#scipy==0.17.0
-#smart-open==1.3.2
+#requests==2.10.0
+#scipy==0.17.1
+#smart-open==1.3.3
 
 ## Testing
 ## Uncomment and install for development
@@ -33,7 +33,7 @@ decorator==4.0.9
 #wheel==0.29.0
 
 ## Pip Freeze Stuff
-#Python==2.7.10
-#pip==8.1.1
-#setuptools==20.9.0
+#Python==3.5.1
+#pip==8.1.2
+#setuptools==21.2.1
 #wsgiref==0.1.2

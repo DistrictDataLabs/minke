@@ -105,12 +105,12 @@ if __name__ == '__main__':
     PROJECT = os.path.join(os.path.dirname(__file__), "..")
     RCORPUS = os.path.join(PROJECT, "fixtures", "corpus")
     PCORPUS = os.path.join(PROJECT, "fixtures", "tagged_corpus")
-    OUTFILE = os.path.join(PROJECT, "fixtures", "keyphrases.graphml.gz")
+    OUTFILE = os.path.join(PROJECT, "fixtures", "keyphrases.graphml")
 
     rcorpus = BaleenCorpusReader(RCORPUS)
     pcorpus = BaleenPickledCorpusReader(PCORPUS)
 
-    categories = ['data science', 'books', 'cooking']
+    categories = ['data science', 'books', 'cooking', 'politics', 'news', 'design', 'gaming', 'news', 'sports', 'tech']
     G = graph(pcorpus, rcorpus, categories=categories)
     print(nx.info(G))
-    nx.write_graphml(G, OUTFILE, encoding='utf8')
+    nx.write_graphml(G, OUTFILE)

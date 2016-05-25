@@ -67,3 +67,4 @@ target/
 # Data and fixtures
 fixtures/corpus
 fixtures/tagged_corpus
+fixtures/sample_corpus
