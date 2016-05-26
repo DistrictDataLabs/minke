@@ -5,6 +5,7 @@ python:
   - '2.7'
 
 before_install:
+  - sudo apt-get install python-numpy python-scipy python-sympy
   - pip install nose
   - pip install coverage
   - pip install coveralls

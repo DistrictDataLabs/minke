@@ -32,6 +32,7 @@ from nltk.tokenize import WordPunctTokenizer
 from nltk.corpus.reader.api import CorpusReader
 from nltk.corpus.reader.api import CategorizedCorpusReader
 from readability.readability import Document as Paper
+from readability.readability import Unparseable
 
 ##########################################################################
 ## Module Constants
@@ -164,7 +165,10 @@ class BaleenCorpusReader(CategorizedCorpusReader, CorpusReader):
         html = self.fields('content', fileids, categories)
         if readability:
             for doc in html:
-                yield Paper(doc).summary()
+                try:
+                    yield Paper(doc).summary()
+                except Unparseable as e:
+                    print("Could not parse HTML: {}".format(e))
         else:
             for doc in html:
                 yield doc
