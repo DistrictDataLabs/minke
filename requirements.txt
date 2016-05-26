@@ -1,6 +1,7 @@
 ## Dependencies
 nltk==3.2.1
 beautifulsoup4==4.4.1
+readability-lxml==0.6.2
 lxml==3.6.0
 gensim==0.12.4
 networkx==1.11
@@ -18,6 +19,10 @@ decorator==4.0.9
 #requests==2.10.0
 #scipy==0.17.1
 #smart-open==1.3.3
+
+## Readability Dependencies
+chardet==2.3.0
+cssselect==0.9.1
 
 ## Testing
 ## Uncomment and install for development

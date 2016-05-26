@@ -31,7 +31,7 @@ from six import string_types
 from nltk.tokenize import WordPunctTokenizer
 from nltk.corpus.reader.api import CorpusReader
 from nltk.corpus.reader.api import CategorizedCorpusReader
-
+from readability.readability import Document as Paper
 
 ##########################################################################
 ## Module Constants
@@ -152,13 +152,22 @@ class BaleenCorpusReader(CategorizedCorpusReader, CorpusReader):
                     for key in fields
                 }
 
-    def html(self, fileids=None, categories=None):
+    def html(self, fileids=None, categories=None, readability=True):
         """
         Returns the HTML content from each JSON document for every file in
         the corpus, ensuring that it exists. Note, this simply returns the
         HTML strings, it doesn't perform any parsing of the HTML.
+
+        If readability is True, clean HTML is returned.
         """
-        return self.fields('content', fileids, categories)
+        ## Returns a generator of documents.
+        html = self.fields('content', fileids, categories)
+        if readability:
+            for doc in html:
+                yield Paper(doc).summary()
+        else:
+            for doc in html:
+                yield doc
 
     def paras(self, fileids=None, categories=None):
         """
@@ -381,8 +390,8 @@ if __name__ == '__main__':
 
     PROJECT = os.path.join(os.path.dirname(__file__), "..")
     # RCORPUS = os.path.join(PROJECT, "fixtures", "corpus")
-    # PCORPUS = os.path.join(PROJECT, "fixtures", "tagged_corpus")
-    SCORPUS = os.path.join(PROJECT, "fixtures", "sample_corpus")
+    # PCORPUS = os.path.join(PROJECT, "fixtures", "tagged")
+    SCORPUS = os.path.join(PROJECT, "fixtures", "sample")
 
     # rcorpus = BaleenCorpusReader(RCORPUS)
     # pcorpus = BaleenPickledCorpusReader(PCORPUS)
