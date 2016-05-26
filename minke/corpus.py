@@ -26,6 +26,8 @@ import codecs
 import pickle
 import nltk.data
 
+from six import string_types
+
 from nltk.tokenize import WordPunctTokenizer
 from nltk.corpus.reader.api import CorpusReader
 from nltk.corpus.reader.api import CategorizedCorpusReader
@@ -135,7 +137,7 @@ class BaleenCorpusReader(CategorizedCorpusReader, CorpusReader):
 
         Note: there is not yet support for nested fields.
         """
-        if isinstance(fields, basestring):
+        if isinstance(fields, string_types):
             fields = [fields,]
 
         if len(fields) == 1:
@@ -379,9 +381,11 @@ if __name__ == '__main__':
 
     PROJECT = os.path.join(os.path.dirname(__file__), "..")
     # RCORPUS = os.path.join(PROJECT, "fixtures", "corpus")
-    PCORPUS = os.path.join(PROJECT, "fixtures", "tagged_corpus")
+    # PCORPUS = os.path.join(PROJECT, "fixtures", "tagged_corpus")
+    SCORPUS = os.path.join(PROJECT, "fixtures", "sample_corpus")
 
     # rcorpus = BaleenCorpusReader(RCORPUS)
-    pcorpus = BaleenPickledCorpusReader(PCORPUS)
+    # pcorpus = BaleenPickledCorpusReader(PCORPUS)
+    scorpus = BaleenCorpusReader(SCORPUS)
 
-    print(pcorpus.describes())
+    print(scorpus.describes())
