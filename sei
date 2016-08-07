@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+# sei
+# Implements the MinkeUtility command line application.
+#
+# Author:   Benjamin Bengfort <bbengfort@districtdatalabs.com>
+# Created:  Sat Aug 06 16:21:35 2016 -0400
+#
+# Copyright (C) 2016 District Data Labs
+# For license information, see LICENSE.txt
+#
+# ID: sei.py [] benjamin@bengfort.com $
+
+"""
+Implements the MinkeUtility command line application.
+"""
+
+##########################################################################
+## Imports
+##########################################################################
+
+from minke.console import MinkeUtility
+
+##########################################################################
+## Load and execute the CLI utility
+##########################################################################
+
+if __name__ == '__main__':
+    app = MinkeUtility.load()
+    app.execute()
