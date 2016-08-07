@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: normalize.py [] benjamin@bengfort.com $
+# ID: normalize.py [978bbb0] benjamin@bengfort.com $
 
 """
 Utilities and helpers for cleaning and normalizing text data.

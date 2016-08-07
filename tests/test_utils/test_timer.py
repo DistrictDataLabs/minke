@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_timer.py [] benjamin@bengfort.com $
+# ID: test_timer.py [9eee771] benjamin@bengfort.com $
 
 """
 Tests for the timer module.

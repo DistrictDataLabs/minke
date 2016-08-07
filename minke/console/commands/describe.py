@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: describe.py [] benjamin@bengfort.com $
+# ID: describe.py [3d75c52] benjamin@bengfort.com $
 
 """
 Command to describe a corpus for monitoring.

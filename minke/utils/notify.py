@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: notify.py [] benjamin@bengfort.com $
+# ID: notify.py [3d75c52] benjamin@bengfort.com $
 
 """
 Helper functions to send notification emails via Gmail.

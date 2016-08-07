@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: sample.py [] benjamin@bengfort.com $
+# ID: sample.py [3d75c52] benjamin@bengfort.com $
 
 """
 An adminstrative script to perform a simple random sample of a corpus.

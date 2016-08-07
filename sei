@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: sei.py [] benjamin@bengfort.com $
+# ID: sei [3d75c52] benjamin@bengfort.com $
 
 """
 Implements the MinkeUtility command line application.

@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: timer.py [] benjamin@bengfort.com $
+# ID: timer.py [3d75c52] benjamin@bengfort.com $
 
 """
 Provides timing functionality for the Minke library.

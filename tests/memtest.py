@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: memtest.py [] benjamin@bengfort.com $
+# ID: memtest.py [0753dd0] benjamin@bengfort.com $
 
 """
 Short script to exercise the corpus reader memory usage. Basically the script

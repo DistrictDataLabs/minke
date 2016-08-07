@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: app.py [] benjamin@bengfort.com $
+# ID: app.py [3d75c52] benjamin@bengfort.com $
 
 """
 Definition of the MinkeUtility app and commands.

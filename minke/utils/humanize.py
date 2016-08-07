@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: humanize.py [] benjamin@bengfort.com $
+# ID: humanize.py [3d75c52] benjamin@bengfort.com $
 
 """
 Provides methods for humanizing values for better readability.

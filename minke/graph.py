@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: graph.py [] benjamin@bengfort.com $
+# ID: graph.py [12fbecd] benjamin@bengfort.com $
 
 """
 Extracts a Graph from keyphrases in the corpus.

@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: notifier.py [] benjamin@bengfort.com $
+# ID: notifier.py [ad9c2f7] benjamin@bengfort.com $
 
 """
 A testing script to see if the email notification utility is working.

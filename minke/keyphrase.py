@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: keyphrase.py [] benjamin@bengfort.com $
+# ID: keyphrase.py [978bbb0] benjamin@bengfort.com $
 
 """
 Extracts keyphrases from the Baleen corpus.

@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: config.py [] benjamin@bengfort.com $
+# ID: config.py [ad9c2f7] benjamin@bengfort.com $
 
 """
 Configuration and settings from a YAML file using Confire.

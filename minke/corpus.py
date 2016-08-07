@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: corpus.py [] benjamin@bengfort.com $
+# ID: corpus.py [0753dd0] benjamin@bengfort.com $
 
 """
 Corpus reader and parser object for accessing data on disk.

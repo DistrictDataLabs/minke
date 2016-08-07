@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: test_decorators.py [] benjamin@bengfort.com $
+# ID: test_decorators.py [9eee771] benjamin@bengfort.com $
 
 """
 Tests for the function decorator utilities in Minke.

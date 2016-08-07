@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: preprocess.py [] benjamin@bengfort.com $
+# ID: preprocess.py [554f88f] benjamin@bengfort.com $
 
 """
 Converts a raw text corpus into a part of speech tokenized corpus.
