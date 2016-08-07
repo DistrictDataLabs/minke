@@ -188,11 +188,12 @@ class Preprocessor(object):
 if __name__ == '__main__':
 
     PROJECT = os.path.join(os.path.dirname(__file__), "..")
-    CORPUS  = os.path.join(PROJECT, "fixtures", "corpus")
-    TARGET  = os.path.join(PROJECT, "fixtures", "tagged_corpus")
+    CORPUS  = os.path.join(PROJECT, "fixtures", "sample")
+    TARGET  = os.path.join(PROJECT, "fixtures", "tagged")
 
     from corpus import BaleenCorpusReader
 
     corpus = BaleenCorpusReader(CORPUS)
     transformer = Preprocessor(corpus, TARGET)
-    transformer.transform()
+    docs = transformer.transform()
+    print(len(list(docs)))

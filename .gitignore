@@ -64,6 +64,9 @@ target/
 # OS X Stuff
 .DS_Store
 
+# Configuration
+conf/minke.yaml
+
 # Data and fixtures
 fixtures/corpus
 fixtures/tagged

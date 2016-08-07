@@ -394,11 +394,11 @@ if __name__ == '__main__':
 
     PROJECT = os.path.join(os.path.dirname(__file__), "..")
     # RCORPUS = os.path.join(PROJECT, "fixtures", "corpus")
-    # PCORPUS = os.path.join(PROJECT, "fixtures", "tagged")
+    PCORPUS = os.path.join(PROJECT, "fixtures", "tagged")
     SCORPUS = os.path.join(PROJECT, "fixtures", "sample")
 
     # rcorpus = BaleenCorpusReader(RCORPUS)
-    # pcorpus = BaleenPickledCorpusReader(PCORPUS)
-    scorpus = BaleenCorpusReader(SCORPUS)
+    pcorpus = BaleenPickledCorpusReader(PCORPUS)
+    # scorpus = BaleenCorpusReader(SCORPUS)
 
-    print(scorpus.describes())
+    print(pcorpus.describes())
