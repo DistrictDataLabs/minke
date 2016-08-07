@@ -20,8 +20,8 @@ Helper functions to send notification emails via Gmail.
 import os
 import smtplib
 
+from email import encoders
 from datetime import datetime
-from email import Encoders
 from email.utils import formatdate
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -78,7 +78,7 @@ def notify(recipient, subject=None, message=None, **kwargs):
     for fpath in kwargs.get('files', []):
         part = MIMEBase('application', 'octet-stream')
         part.set_payload(open(fpath, 'rb').read())
-        Encoders.encode_base64(part)
+        encoders.encode_base64(part)
         part.add_header(
             'Content-Disposition', 'attachment; filename={}'.format(
                 os.path.basename(fpath)
