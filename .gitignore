@@ -68,7 +68,6 @@ target/
 conf/minke.yaml
 
 # Data and fixtures
-fixtures/corpus
-fixtures/tagged
-fixtures/sample
-fixtures/20160504
+fixtures/*
+!fixtures/*.zip
+!fixtures/*.tgz
