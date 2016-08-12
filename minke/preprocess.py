@@ -22,6 +22,8 @@ import nltk
 import shutil
 import pickle
 
+from minke.config import settings
+
 ##########################################################################
 ## Preprocessor
 ##########################################################################
@@ -37,13 +39,17 @@ class Preprocessor(object):
     easily accessed for common parsing activity.
     """
 
-    def __init__(self, corpus, target=None):
+    def __init__(self, corpus, target=None, **kwargs):
         """
         The corpus is the `BaleenCorpusReader` to preprocess and pickle.
         The target is the directory on disk to output the pickled corpus to.
         """
         self.corpus = corpus
         self.target = target
+
+        # Collect settings from arguments or YAML configuration.
+        self.overwrite = kwargs.get('overwrite', settings.preprocess.overwrite)
+        self.skip_exists = kwargs.get('skip_exists', settings.preprocess.skip_exists)
 
     @property
     def target(self):
@@ -80,7 +86,7 @@ class Preprocessor(object):
         """
         # Find the directory, relative from the corpus root.
         parent = os.path.relpath(
-            os.path.dirname(self.corpus.abspath(fileid)), corpus.root
+            os.path.dirname(self.corpus.abspath(fileid)), self.corpus.root
         )
 
         # Compute the name parts to reconstruct
@@ -92,6 +98,25 @@ class Preprocessor(object):
 
         # Return the path to the file relative to the target.
         return os.path.normpath(os.path.join(self.target, parent, basename))
+
+    def replicate(self, source):
+        """
+        Directly copies all files in the source directory to the root of the
+        target directory (does not maintain subdirectory structures). Used to
+        copy over metadata files from the root of the corpus to the target.
+        """
+        names = [
+            name for name in os.listdir(source)
+            if not name.startswith('.')
+        ]
+
+        # Filter out directories and copy files
+        for name in names:
+            src = os.path.abspath(os.path.join(source, name))
+            dst = os.path.abspath(os.path.join(self.target, name))
+
+            if os.path.isfile(src):
+                shutil.copy(src, dst)
 
     def tokenize(self, fileid):
         """
@@ -134,9 +159,18 @@ class Preprocessor(object):
 
         # Ensure that we are not overwriting existing data
         if os.path.exists(target):
-            raise ValueError(
-                "Path at '{}' already exists!".format(target)
-            )
+            # If we're in overwrite mode just keep going.
+            if not self.overwrite:
+
+                # If we're going to skip files that already exist, return.
+                if self.skip_exists:
+                    return None
+
+                # Otherwise not overwriting and not skipping so fail.
+                else:
+                    raise ValueError(
+                        "Path at '{}' already exists!".format(target)
+                    )
 
         # Create a data structure for the pickle
         document = list(self.tokenize(fileid))
@@ -151,7 +185,7 @@ class Preprocessor(object):
         # Return the target fileid
         return target
 
-    def transform(self, fileids=None, categories=None, target=None):
+    def transform(self, fileids=None, categories=None):
         """
         Transform the wrapped corpus, writing out the segmented, tokenized,
         and part of speech tagged corpus as a pickle to the target directory.
@@ -159,26 +193,12 @@ class Preprocessor(object):
         This method will also directly copy files that are in the corpus.root
         directory that are not matched by the corpus.fileids()
         """
-        # Add the new target directory
-        if target: self.target = target
-
         # Make the target directory if it doesn't already exist
         if not os.path.exists(self.target):
             os.makedirs(self.target)
 
         # First shutil.copy anything in the root directory.
-        names = [
-            name  for name in os.listdir(self.corpus.root)
-            if not name.startswith('.')
-        ]
-
-        # Filter out directories and copy files
-        for name in names:
-            source = os.path.abspath(os.path.join(self.corpus.root, name))
-            target = os.path.abspath(os.path.join(self.target, name))
-
-            if os.path.isfile(source):
-                shutil.copy(source, target)
+        self.replicate(self.corpus.root)
 
         # Resolve the fileids to start processing
         fileids = self.fileids(fileids, categories)

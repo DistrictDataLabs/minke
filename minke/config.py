@@ -18,6 +18,7 @@ Configuration and settings from a YAML file using Confire.
 ##########################################################################
 
 import os
+import multiprocessing as mp
 
 from confire import Configuration
 
@@ -35,14 +36,26 @@ PROJECT  = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 class NotifyConfiguration(Configuration):
     """
-    Email settings so that CloudScope can send email messages
+    Email settings so that CloudScope can send email messages.
+    Note, if using Gmail, you must set simple authentication.
     """
 
-    username    = None
-    password    = None
-    email_host  = None
-    email_port  = None
-    fail_silent = True
+    username    = None  # Username to email service
+    password    = None  # Password of email service
+    email_host  = None  # Domain of the SMTP serivce
+    email_port  = None  # Port that the SMTP service listens on
+    fail_silent = True  # Whether to raise an error or not.
+
+
+class PreprocessingConfiguration(Configuration):
+    """
+    Settings for preprocessing a corpus to another location
+    """
+
+    tasks       = mp.cpu_count() # Number of tasks to run in parallel
+    parallel    = False # Parallelize the preprocessing with multiprocessing
+    overwrite   = False # Overwrite existing files with new data
+    skip_exists = True  # Skip any filenames that already exist in the target
 
 
 ##########################################################################
@@ -64,6 +77,9 @@ class MinkeConfiguration(Configuration):
 
     # Notification parameters
     notify     = NotifyConfiguration()
+
+    # Preprocessing parameters
+    preprocess = PreprocessingConfiguration()
 
 
 ##########################################################################
