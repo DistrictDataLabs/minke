@@ -16,6 +16,7 @@ PyYAML==3.11
 python-dateutil==2.5.2
 six==1.10.0
 decorator==4.0.9
+tqdm==4.8.3
 
 ## Gensim Dependencies
 #boto==2.40.0

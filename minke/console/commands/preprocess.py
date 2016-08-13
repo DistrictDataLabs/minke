@@ -22,6 +22,7 @@ from minke.config import settings
 from collections import OrderedDict
 from minke.utils.timer import Timer
 from minke.preprocess import Preprocessor
+from minke.preprocess import ProgressPreprocessor
 from minke.corpus import BaleenCorpusReader
 
 
@@ -44,6 +45,11 @@ class PreprocessCommand(Command):
             "default": settings.preprocess.tasks,
             "metavar": "CPUs",
             "help": "if parallel, specify the number of processes",
+        }),
+        (('-s', '--silent'), {
+            "action": "store_true",
+            "default": False,
+            "help": "run without the progress bar for backgrounding",
         }),
         ('--overwrite', {
             'action': 'store_true',
@@ -76,14 +82,20 @@ class PreprocessCommand(Command):
             'skip_exists': args.skip_exists,
         }
 
-        # Handle multiprocessing
+        # Select class and modiffy parameters for specific classes.
         if args.parallel:
             raise NotImplementedError("Parallel prprocessing not implemented.")
+
+        else:
+            if args.silent:
+                Transformer = Preprocessor
+            else:
+                Transformer = ProgressPreprocessor
 
         # Time and execute the transformation
         with Timer() as timer:
             corpus = BaleenCorpusReader(args.corpus[0])
-            transformer = Preprocessor(corpus, args.target[0], **kwargs)
+            transformer = Transformer(corpus, args.target[0], **kwargs)
 
             docs = sum(1 for doc in transformer.transform())
 

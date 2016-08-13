@@ -22,6 +22,7 @@ import nltk
 import shutil
 import pickle
 
+from tqdm import tqdm
 from minke.config import settings
 
 ##########################################################################
@@ -191,7 +192,7 @@ class Preprocessor(object):
         and part of speech tagged corpus as a pickle to the target directory.
 
         This method will also directly copy files that are in the corpus.root
-        directory that are not matched by the corpus.fileids()
+        directory that are not matched by the corpus.fileids().
         """
         # Make the target directory if it doesn't already exist
         if not os.path.exists(self.target):
@@ -203,6 +204,31 @@ class Preprocessor(object):
         # Resolve the fileids to start processing
         fileids = self.fileids(fileids, categories)
         return map(self.process, fileids)
+
+
+class ProgressPreprocessor(Preprocessor):
+    """
+    This preprocessor adds a progress bar for visually informing the user
+    what is going on during preprocessing.
+    """
+
+    def transform(self, fileids=None, categories=None):
+        """
+        At the moment, we simply have to replace the entire transform method
+        to get progress bar functionality. Kind of a bummer, but it's a small
+        method (purposefully so).
+        """
+        # Make the target directory if it doesn't already exist
+        if not os.path.exists(self.target):
+            os.makedirs(self.target)
+
+        # First shutil.copy anything in the root directory.
+        self.replicate(self.corpus.root)
+
+        # Resolve the fileids to start processing
+        fileids = self.fileids(fileids, categories)
+        for fileid in tqdm(fileids):
+            yield self.process(fileid)
 
 
 if __name__ == '__main__':
