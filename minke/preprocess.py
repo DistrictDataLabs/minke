@@ -287,6 +287,8 @@ class ParallelPreprocessor(Preprocessor):
 class ProgressParallelPreprocessor(ParallelPreprocessor):
     """
     Preprocessor that implements both multiprocessing and a progress bar.
+    Note: had to jump through a lot of hoops just to get a progress bar, not
+    sure it was worth it or that this performs the most effectively ...
     """
 
     def on_result(self, pbar):
