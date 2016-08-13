@@ -8,7 +8,7 @@
 # Copyright (C) 2014 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: setup.py [] benjamin@bengfort.com $
+# ID: setup.py [c5b329a] benjamin@bengfort.com $
 
 """
 Setup script for installing Minke.
