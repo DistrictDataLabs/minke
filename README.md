@@ -9,6 +9,28 @@
 
 [![Minke Whale](docs/images/minke.jpg)][minkewhale.jpg]
 
+## Quickstart
+
+Minke provides a command line script called `sei` that allows you to interact with the Minke library and baleen corpora. For example, to sample a corpus to a smaller subset for testing or development you can do the following:
+
+```
+$ ./sei sample path/to/corpus path/to/sample
+```
+
+You can describe corpora using the `describe` command as follows:
+
+```
+$ ./sei describe path/to/corpus
+```
+
+And you can preprocess a corpus into a pickled corpus:
+
+```
+$ ./sei preprocess path/to/html/corpus path/to/pickled/corpus
+```
+
+Many more options and configurations are available; use `./sei --help` for more information and refer to the `conf/minke-example.conf` configuration file. 
+
 ## About
 
 The [Baleen](https://github.com/bbengfort/baleen) ingestion tool is used to create a corpus of web articles and blogs from RSS feeds. Minke extends Baleen with a library to perform text analysis and perform graph extraction on the exported corpora.

@@ -1,24 +1,47 @@
-## Dependencies 
+## Dependencies
+nltk==3.2.1
+beautifulsoup4==4.4.1
+readability-lxml==0.6.2
+lxml==3.6.0
+gensim==0.12.4
+networkx==1.11
+
+## Console Utility
+commis==0.3
+confire==0.2.0
+colorama==0.3.6
+PyYAML==3.11
 
 ## Utilities
 python-dateutil==2.5.2
 six==1.10.0
+decorator==4.0.9
+tqdm==4.8.3
+
+## Gensim Dependencies
+#boto==2.40.0
+#bz2file==0.98
+#requests==2.10.0
+#smart-open==1.3.3
+
+## Scientific Computing Dependencies
+#scipy==0.17.1
+#numpy==1.11.0
+
+## Readability Dependencies
+chardet==2.3.0
+cssselect==0.9.1
 
 ## Testing
 ## Uncomment and install for development
 #nose==1.3.7
-#coverage==4.0.3
-#mock==2.0.0
-#funcsigs==1.0.0
-#ordereddict==1.1
-#pbr==1.9.1
+#coverage==4.2
 
 ## Building
 ## Uncomment and install for deployment
 #wheel==0.29.0
 
 ## Pip Freeze Stuff
-#Python==2.7.10
-#pip==8.1.1
-#setuptools==20.9.0
-#wsgiref==0.1.2
+#Python==3.5.1
+#pip==8.1.2
+#setuptools==21.2.1
