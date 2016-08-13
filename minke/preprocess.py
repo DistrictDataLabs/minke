@@ -21,6 +21,7 @@ import os
 import nltk
 import shutil
 import pickle
+import multiprocessing as mp
 
 from tqdm import tqdm
 from minke.config import settings
@@ -202,8 +203,8 @@ class Preprocessor(object):
         self.replicate(self.corpus.root)
 
         # Resolve the fileids to start processing
-        fileids = self.fileids(fileids, categories)
-        return map(self.process, fileids)
+        for fileid in self.fileids(fileids, categories):
+            yield self.process(fileid)
 
 
 class ProgressPreprocessor(Preprocessor):
@@ -225,10 +226,110 @@ class ProgressPreprocessor(Preprocessor):
         # First shutil.copy anything in the root directory.
         self.replicate(self.corpus.root)
 
-        # Resolve the fileids to start processing
+        # Get the total corpus size for per byte counting
+        corpus_size = sum(self.corpus.sizes(fileids, categories))
+
+        # Start processing with a progress bar.
+        with tqdm(total=corpus_size, unit='B', unit_scale=True) as pbar:
+            for fileid in self.fileids(fileids, categories):
+                yield self.process(fileid)
+                pbar.update(sum(self.corpus.sizes(fileids=fileid)))
+
+
+class ParallelPreprocessor(Preprocessor):
+    """
+    Implements multiprocessing to speed up the preprocessing efforts.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Get parallel-specific arguments and then call super.
+        """
+        self.tasks   = kwargs.pop('tasks', settings.preprocess.tasks)
+        super(ParallelPreprocessor, self).__init__(*args, **kwargs)
+
+    def on_result(self, result):
+        """
+        Appends the results to the master results list.
+        """
+        self.results.append(result)
+
+    def transform(self, fileids=None, categories=None):
+        """
+        At the moment, we simply have to replace the entire transform method
+        to get progress bar functionality. Kind of a bummer, but it's a small
+        method (purposefully so).
+        """
+        # Make the target directory if it doesn't already exist
+        if not os.path.exists(self.target):
+            os.makedirs(self.target)
+
+        # First shutil.copy anything in the root directory.
+        self.replicate(self.corpus.root)
+
+        # Reset the results
+        self.results = []
+
+        # Create a multiprocessing pool
+        pool  = mp.Pool(processes=self.tasks)
+        tasks = [
+            pool.apply_async(self.process, (fileid,), callback=self.on_result)
+            for fileid in self.fileids(fileids, categories)
+        ]
+
+        # Close the pool and join
+        pool.close()
+        pool.join()
+
+        return self.results
+
+
+class ProgressParallelPreprocessor(ParallelPreprocessor):
+    """
+    Preprocessor that implements both multiprocessing and a progress bar.
+    """
+
+    def on_result(self, pbar):
+        """
+        Indicates progress on result.
+        """
+
+        def inner(result):
+            pbar.update(1)
+            self.results.append(result)
+        return inner
+
+    def transform(self, fileids=None, categories=None):
+        """
+        Setup the progress bar before conducting multiprocess transform.
+        """
+
+        # Make the target directory if it doesn't already exist
+        if not os.path.exists(self.target):
+            os.makedirs(self.target)
+
+        # First shutil.copy anything in the root directory.
+        self.replicate(self.corpus.root)
+
+        # Reset the results
+        self.results = []
         fileids = self.fileids(fileids, categories)
-        for fileid in tqdm(fileids):
-            yield self.process(fileid)
+
+        # Get the total corpus size for per byte counting and create pbar
+        with tqdm(total=len(fileids), unit='Docs') as pbar:
+
+            # Create a multiprocessing pool
+            pool  = mp.Pool(processes=self.tasks)
+            tasks = [
+                pool.apply_async(self.process, (fileid,), callback=self.on_result(pbar))
+                for fileid in fileids
+            ]
+
+            # Close the pool and join
+            pool.close()
+            pool.join()
+
+        return self.results
 
 
 if __name__ == '__main__':
@@ -240,6 +341,6 @@ if __name__ == '__main__':
     from corpus import BaleenCorpusReader
 
     corpus = BaleenCorpusReader(CORPUS)
-    transformer = Preprocessor(corpus, TARGET)
+    transformer = ProgressPreprocessor(corpus, TARGET)
     docs = transformer.transform()
     print(len(list(docs)))

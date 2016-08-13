@@ -23,6 +23,8 @@ from collections import OrderedDict
 from minke.utils.timer import Timer
 from minke.preprocess import Preprocessor
 from minke.preprocess import ProgressPreprocessor
+from minke.preprocess import ParallelPreprocessor
+from minke.preprocess import ProgressParallelPreprocessor
 from minke.corpus import BaleenCorpusReader
 
 
@@ -84,9 +86,16 @@ class PreprocessCommand(Command):
 
         # Select class and modiffy parameters for specific classes.
         if args.parallel:
-            raise NotImplementedError("Parallel prprocessing not implemented.")
+            # Add the parallel specific arguments
+            kwargs['tasks'] = args.tasks
 
+            # Select class based on progress bar required or not.
+            if args.silent:
+                Transformer = ParallelPreprocessor
+            else:
+                Transformer = ProgressParallelPreprocessor
         else:
+            # Seelct class based on progress bar required or not.
             if args.silent:
                 Transformer = Preprocessor
             else:
@@ -97,6 +106,11 @@ class PreprocessCommand(Command):
             corpus = BaleenCorpusReader(args.corpus[0])
             transformer = Transformer(corpus, args.target[0], **kwargs)
 
-            docs = sum(1 for doc in transformer.transform())
+            docs, skips = 0, 0
+            for doc in transformer.transform():
+                if doc is None: skips += 1
+                else: docs += 1
 
-        return "Preprocessed {} documents in {}".format(docs, timer)
+        return "Preprocessed {:,} documents, skipped {:,} in {}".format(
+            docs, skips, timer
+        )
