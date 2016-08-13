@@ -21,3 +21,10 @@ notify:
     email_host:  null   # host name of the email service (e.g. smtp.gmail.com)
     email_port:  null   # port of the secure smtp (e.g. 587)
     fail_silent: true   # if there is an error, ignore or raise a new one.
+
+# Preprocessing Settings
+preprocess:
+    overwrite:   false  # overwrite existing files with new data
+    skip_exists: true   # skip any filenames that already exist in the target
+    # tasks: 4          # Number of tasks to run in parallel (comment out for maximum cores on computer)
+    parallel:    false  # Parallelize the preprocessing with multiprocessing

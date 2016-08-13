@@ -25,6 +25,7 @@ import random
 from commis import Command
 from minke.utils.timer import Timer
 from minke.corpus import BaleenCorpusReader
+from collections import OrderedDict
 
 
 ##########################################################################
@@ -35,28 +36,28 @@ class SampleCommand(Command):
 
     name = 'sample'
     help = 'creates a simple random sample of a corpus of documents'
-    args = {
-        ('-p', '--percent'): {
+    args = OrderedDict([
+        (('-p', '--percent'), {
             'type': int,
             'default': 10,
             'metavar': '%',
             'help': 'the percent of the corpus to sample, default is 10%%'
-        },
-        ('-C', '--by-corpus'): {
+        }),
+        (('-C', '--by-corpus'), {
             'action': 'store_false',
             'dest': 'categorical',
             'default': True,
             'help': 'sample the corpus as a whole, not by category.'
-        },
-        'source': {
+        }),
+        ('source', {
             'nargs': 1,
             'help': 'path to the directory containing the original corpus.',
-        },
-        'target': {
+        }),
+        ('target', {
             'nargs': 1,
             'help': 'path to write the sampled corpus out to.'
-        },
-    }
+        }),
+    ])
 
     def handle(self, args):
         """

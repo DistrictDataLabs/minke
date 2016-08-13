@@ -212,7 +212,7 @@ class BaleenCorpusReader(CategorizedCorpusReader, CorpusReader):
 
         # Create a generator, getting every path and computing filesize
         for path, enc, fileid in self.abspaths(fileids, True, True):
-            yield fileid, os.path.getsize(path)
+            yield os.path.getsize(path)
 
     def describe(self, fileids=None, categories=None):
         """

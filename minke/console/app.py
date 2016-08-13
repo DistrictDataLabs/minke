@@ -33,6 +33,7 @@ EPILOG      = "If there are any bugs or concerns, submit an issue on GitHub"
 COMMANDS    = [
     SampleCommand,
     DescribeCommand,
+    PreprocessCommand,
 ]
 
 ##########################################################################
