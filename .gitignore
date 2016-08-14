@@ -71,3 +71,6 @@ conf/minke.yaml
 fixtures/*
 !fixtures/*.zip
 !fixtures/*.tgz
+
+# Profiling 
+mprofile_*
