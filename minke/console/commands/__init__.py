@@ -20,3 +20,4 @@ Commands for the Minke CLI utility
 from .sample import SampleCommand
 from .describe import DescribeCommand
 from .preprocess import PreprocessCommand
+from .sizes import SizesCommand

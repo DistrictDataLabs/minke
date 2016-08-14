@@ -52,7 +52,7 @@ The versioning uses a three part version system, "a.b.c" - "a" represents a majo
 ### Version 0.1
 
 * **tag**: [v0.1](https://github.com/bbengfort/minke/releases/tag/v0.1)
-* **deployment**: (under development)
-* **commit**: (see tag)
+* **deployment**: August 12, 2016
+* **commit**: [e41e858](https://github.com/bbengfort/minke/commit/e41e8583f1386dbad5249aad740343c984832f1e)
 
-Creating intitial prototype version now.
+This is the initial release for Minke that provides preprocessing support for raw HTML/JSON exports from Baleen. This version provides `CorpusReader` subclasses for reading a Baleen corpus while engaging NLTK preprocessing techniques. Further a transformer has been created to preprocess the original corpus into a pickled, preprocessed corpus for faster loading and reading. Preprocessing has been operationalized with a console utility (that also has stub commands for sampling and description) that provides progress indication, start and restart commands, as well as multiprocessing to speed things up.

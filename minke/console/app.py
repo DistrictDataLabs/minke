@@ -34,6 +34,7 @@ COMMANDS    = [
     SampleCommand,
     DescribeCommand,
     PreprocessCommand,
+    SizesCommand,
 ]
 
 ##########################################################################
