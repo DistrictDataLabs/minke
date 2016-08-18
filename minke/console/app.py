@@ -35,6 +35,7 @@ COMMANDS    = [
     DescribeCommand,
     PreprocessCommand,
     SizesCommand,
+    ManifestCommand,
 ]
 
 ##########################################################################
