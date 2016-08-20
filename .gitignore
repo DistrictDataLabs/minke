@@ -71,6 +71,8 @@ conf/minke.yaml
 fixtures/*
 !fixtures/*.zip
 !fixtures/*.tgz
+fixtures/corpus-20160813.zip
+fixtures/preprocessed-corpus-20160813.zip
 
 # Profiling 
 mprofile_*
