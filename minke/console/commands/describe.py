@@ -22,8 +22,18 @@ import os
 from commis import Command
 from operator import itemgetter
 from minke.corpus import BaleenCorpusReader
+from minke.corpus import BaleenPickledCorpusReader
 from minke.utils.humanize import filesize
 
+
+##########################################################################
+## Readers
+##########################################################################
+
+READERS = {
+    'json': BaleenCorpusReader,
+    'pickle': BaleenPickledCorpusReader,
+}
 
 ##########################################################################
 ## Command
@@ -34,6 +44,16 @@ class DescribeCommand(Command):
     name = "describe"
     help = "describe corpus properties for monitoring"
     args = {
+        ('-r', '--reader'): {
+            'default': 'pickle',
+            'choices': READERS.keys(),
+            'help': 'the corpus reader to use and parse documents',
+        },
+        ('-d', '--disk-usage'): {
+            'action': 'store_true',
+            'default': False,
+            'help': 'display disk usage of corpus by category and exit',
+        },
         'corpus': {
             'nargs': 1,
             'help': 'the path to the corpus to describe',
@@ -44,8 +64,13 @@ class DescribeCommand(Command):
         """
         Handle the describe command.
         """
-        self.corpus = BaleenCorpusReader(args.corpus[0])
-        return self.disk_usage()
+        reader = READERS[args.reader]
+        self.corpus = reader(args.corpus[0])
+
+        if args.disk_usage:
+            return self.disk_usage()
+
+        return self.corpus.describes()
 
     def disk_usage(self):
         """
@@ -55,17 +80,17 @@ class DescribeCommand(Command):
 
         # Global disk usage statement
         output.append(
-            "{} documents in {} categories ({})".format(
+            "{:,} documents in {:,} categories ({})".format(
                 len(self.corpus.fileids()), len(self.corpus.categories()),
-                filesize(sum(s[1] for s in self.corpus.sizes()))
+                filesize(sum(self.corpus.sizes()))
             )
         )
 
         # Per category usage statement
         for cat in self.corpus.categories():
-            csize = sum(size[1] for size in self.corpus.sizes(categories=cat))
+            csize = sum(self.corpus.sizes(categories=cat))
             output.append(
-                "  - {}: {} ({})".format(
+                "  - {}: {:,} ({})".format(
                     cat, len(self.corpus.fileids(categories=cat)), filesize(csize)
                 )
             )

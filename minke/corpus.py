@@ -33,6 +33,8 @@ from nltk.corpus.reader.api import CorpusReader
 from nltk.corpus.reader.api import CategorizedCorpusReader
 from readability.readability import Document as Paper
 from readability.readability import Unparseable
+from minke.utils.humanize import timedelta as humanizedelta
+
 
 ##########################################################################
 ## Module Constants
@@ -251,6 +253,7 @@ class BaleenCorpusReader(CategorizedCorpusReader, CorpusReader):
             'ppdoc':  float(counts['paras']) / float(n_fileids),
             'sppar':  float(counts['sents']) / float(counts['paras']),
             'secs':   time.time() - started,
+            'timer':  humanizedelta(seconds=time.time() - started),
         }
 
     def describes(self, fileids=None, categories=None):
@@ -258,13 +261,13 @@ class BaleenCorpusReader(CategorizedCorpusReader, CorpusReader):
         Returns a string representation of the describe command.
         """
         return (
-            "Baleen corpus contains {files} files in {topics} categories.\n"
+            "Baleen corpus contains {files:,} files in {topics:,} categories.\n"
             "Structured as:\n"
-            "    {paras} paragraphs ({ppdoc:0.3f} mean paragraphs per file)\n"
-            "    {sents} sentences ({sppar:0.3f} mean sentences per paragraph).\n"
-            "Word count of {words} with a vocabulary of {vocab} "
+            "    {paras:,} paragraphs ({ppdoc:0.3f} mean paragraphs per file)\n"
+            "    {sents:,} sentences ({sppar:0.3f} mean sentences per paragraph).\n"
+            "Word count of {words:,} with a vocabulary of {vocab:,} "
             "({lexdiv:0.3f} lexical diversity).\n"
-            "Corpus scan took {secs:0.3f} seconds."
+            "Corpus scan took {timer}."
         ).format(**self.describe(fileids, categories))
 
 
@@ -387,6 +390,7 @@ class BaleenPickledCorpusReader(BaleenCorpusReader):
             'ppdoc':  float(counts['paras']) / float(n_fileids),
             'sppar':  float(counts['sents']) / float(counts['paras']),
             'secs':   time.time() - started,
+            'timer':  humanizedelta(seconds=time.time() - started),
         }
 
 
