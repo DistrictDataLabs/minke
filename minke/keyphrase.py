@@ -60,7 +60,7 @@ def extract_candidates(sents, chunks=True, grammar=GRAMMAR, tags=GOODTAGS, **kwa
 candidates = extract_candidates
 
 
-def extract_candidate_chunks(sents, grammar=GRAMMAR, tagged=False, **kwargs):
+def extract_candidate_chunks(sents, grammar=GRAMMAR, tagged=True, **kwargs):
     """
     Extracts key chunks based on a grammar for a list of tokenized sentences.
     If the sentences are already tokenized and tagged, pass in: tagged=True
@@ -81,7 +81,7 @@ def extract_candidate_chunks(sents, grammar=GRAMMAR, tagged=False, **kwargs):
         chunks = [
             " ".join(word for word, pos, chunk in group).lower()
             for key, group in groupby(
-                chunks, lambda (word, pos, chunk): chunk != 'O'
+                chunks, lambda g: g[2] != 'O'
             ) if key
         ]
 
@@ -90,10 +90,10 @@ def extract_candidate_chunks(sents, grammar=GRAMMAR, tagged=False, **kwargs):
             yield chunk
 
 
-def extract_candidate_words(sents, tags=GOODTAGS, tagged=False, **kwargs):
+def extract_candidate_words(sents, tags=GOODTAGS, tagged=True, **kwargs):
     """
     Extracts key words based on a list of good part of speech tags.
-    If the sentences are already tokenized and tagged, pass in: tagged=True
+    If the sentences are not already tokenized and tagged, pass in: tagged=False
     """
     normalizer = Normalizer(**kwargs)
 
@@ -152,7 +152,7 @@ class TFIDFScorer(Scorer):
         Fits the TF-IDF model and creates the lexicon and scores.
         """
         # Resolve the fileids and the categories for doc specific selection.
-        self.fileids = self.corpus._resolve(fileids, categories)
+        self.fileids = self.corpus.fileids(categories)
 
         # Determine if we have a tagged corpus or not
         tagged = isinstance(self.corpus, BaleenPickledCorpusReader)
@@ -216,9 +216,9 @@ if __name__ == '__main__':
     scorer.score(categories=['data science'])
 
     for idx, (fileid, scores) in enumerate(scorer.keyphrases()):
-        print u"Document '{}' keyphrases:".format(fileid)
+        print("Document '{}' keyphrases:".format(fileid))
         for word, score in scores:
-            print u"{:0.3f}: {}".format(score, word)
-        print
+            print("{:0.3f}: {}".format(score, word))
+        print("")
 
         if idx > 5: break

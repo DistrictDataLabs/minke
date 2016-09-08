@@ -18,6 +18,7 @@ Corpus reader and parser object for accessing data on disk.
 ##########################################################################
 
 import os
+import csv
 import bs4
 import time
 import json
@@ -88,6 +89,12 @@ class BaleenCorpusReader(CategorizedCorpusReader, CorpusReader):
         """
         data = self.open('feeds.json')
         return json.load(data)
+
+    def manifest(self):
+        """
+        Opens and returns the manifest associated with the corpus.
+        """
+        return csv.DictReader(self.open('manifest.csv'))
 
     def _resolve(self, fileids, categories):
         """
@@ -393,6 +400,15 @@ class BaleenPickledCorpusReader(BaleenCorpusReader):
             'timer':  humanizedelta(seconds=time.time() - started),
         }
 
+
+##########################################################################
+## Reader/Type Mapping
+##########################################################################
+
+READERS = {
+    'json': BaleenCorpusReader,
+    'pickle': BaleenPickledCorpusReader,
+}
 
 if __name__ == '__main__':
 

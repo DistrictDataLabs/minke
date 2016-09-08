@@ -36,6 +36,7 @@ COMMANDS    = [
     PreprocessCommand,
     SizesCommand,
     ManifestCommand,
+    GraphCommand,
 ]
 
 ##########################################################################

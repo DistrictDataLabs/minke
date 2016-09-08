@@ -16,3 +16,19 @@ Utility functions, decorators, timers, etc. for the Minke project.
 ##########################################################################
 ## Imports
 ##########################################################################
+
+
+##########################################################################
+## Helper Functions
+##########################################################################
+
+def module_exists(name):
+    """
+    Checks if the module with the given name exists and can be imported.
+    """
+    try:
+        __import__(name)
+    except ImportError:
+        return False
+    else:
+        return True

@@ -21,15 +21,17 @@ import os
 import networkx as nx
 
 from minke.keyphrase import TFIDFScorer
+from minke.utils import module_exists
+
+if module_exists('graph_tool.all'):
+    import graph_tool.all as gt
 
 
 ##########################################################################
 ## Graph Extraction
 ##########################################################################
 
-
-
-def graph(corpus, lookup, categories=None, verbose=True):
+def graph(corpus, categories=None, manifest=True, verbose=True):
     """
     Returns a TF-IDF Graph of key terms to documents to feeds to categories.
     Temporarily this loads two corpora one that's already parsed and one that
@@ -47,7 +49,7 @@ def graph(corpus, lookup, categories=None, verbose=True):
     if verbose: print("Creating category, feed, and document nodes")
     G.add_nodes_from(corpus.categories(), type='category')
     G.add_nodes_from([feed['title'] for feed in feeds.values()], type='feed')
-    G.add_nodes_from(corpus.fileids(), type='document')
+    G.add_nodes_from(corpus.fileids(categories=categories), type='document')
 
     # Create feed-category edges
     if verbose: print("Creating feed-category edges")
@@ -63,22 +65,28 @@ def graph(corpus, lookup, categories=None, verbose=True):
     ])
 
     # Add document attributes from lookup and document-feed edges
-    if verbose: print("Adding document attributes from lookup")
-    for fileid in corpus.fileids(categories=categories):
+    if manifest:
+        if verbose: print("Loading manifest from CSV - I suggest sqlite next time.")
+        manifest = {
+            row['document']: row for row in corpus.manifest()
+        }
 
-        # Figure out the lookup file extension
-        rawid, ext = os.path.splitext(fileid)
-        rawid += ".json"
+        if verbose: print("Adding document attributes from manifest")
+        for fileid in corpus.fileids(categories=categories):
 
-        # Load the document from the lookup
-        doc = lookup.docs(fileids=rawid).next()
+            # Figure out the lookup file extension
+            docid, _ = os.path.splitext(os.path.basename(fileid))
+            docmeta = manifest.get(docid, {})
 
-        # Set the node attributes
-        G.node[fileid]['title'] = doc['title']
-        G.node[fileid]['pubdate'] = doc.get('pubdate', {}).get('$date', 0)
+            # Load the document from the lookup
+            # Set the node attributes
+            G.node[fileid]['title'] = docmeta.get('title', None)
+            G.node[fileid]['url'] = docmeta.get('url', None)
+            G.node[fileid]['pubdate'] = docmeta.get('pubdate', None)
 
-        # Create the document-feed edge
-        G.add_edge(fileid, feeds[doc['feed']['$oid']]['title'])
+            # Create the document-feed edge
+            if 'feed' in docmeta:
+                G.add_edge(fileid, docmeta['feed'])
 
 
     # Perform the keyphrase extractions using TF-IDF Scores

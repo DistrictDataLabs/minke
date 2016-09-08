@@ -21,19 +21,9 @@ import os
 
 from commis import Command
 from operator import itemgetter
-from minke.corpus import BaleenCorpusReader
-from minke.corpus import BaleenPickledCorpusReader
+from minke.corpus import READERS
 from minke.utils.humanize import filesize
 
-
-##########################################################################
-## Readers
-##########################################################################
-
-READERS = {
-    'json': BaleenCorpusReader,
-    'pickle': BaleenPickledCorpusReader,
-}
 
 ##########################################################################
 ## Command

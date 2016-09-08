@@ -124,7 +124,7 @@ class Normalizer(object):
 
 if __name__ == '__main__':
     norm = Normalizer()
-    print list(norm.tokenize((
+    print(list(norm.tokenize((
         'Sometimes, technically minded people feel they are not'
         ' good candidates for leadership positions.'
-    )))
+    ))))
